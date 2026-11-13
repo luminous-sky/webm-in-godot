@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(GodotWebm)
+project(GodotWebm LANGUAGES CXX)
 
 option(DEBUG "Adds debug flags" OFF)
 
@@ -14,6 +14,9 @@ target_include_directories(out
 target_link_directories(out
     PRIVATE thirdparty/lib
 )
+target_link_libraries(out
+    PRIVATE webm
+)
 
 target_compile_options(out
     PRIVATE -Wall
@@ -23,6 +26,6 @@ if(DEBUG)
         PRIVATE -g -fsanitize=address
     )
     target_link_options(out
-        PRIVATE -fsantiize=address
+        PRIVATE -fsanitize=address
     )
 endif()
