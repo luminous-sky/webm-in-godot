@@ -7,6 +7,7 @@ add_executable(out)
 target_sources(out
     PRIVATE
         src/main.cpp
+        src/read_handler.cpp
 )
 target_include_directories(out
     PRIVATE thirdparty/include
