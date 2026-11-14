@@ -39,5 +39,26 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+
+    if (callback.video_found) {
+        cout << "Video Codec: " << (callback.video_track.codec_id).value() << "\n";
+
+        Video videoElement = (callback.video_track.video).value();
+        cout << "Resolution: ";
+        cout << videoElement.display_width.value() << "x" << videoElement.display_height.value() << "\n";
+    }
+
+    if (callback.audio_found) {
+        cout << "Audio Codec: " << (callback.audio_track.codec_id).value() << "\n";
+
+        Audio audioElement = (callback.audio_track.audio).value();
+        cout << "Channels: " << audioElement.channels.value() << "\n";
+        cout << "Bit Depth: " << audioElement.bit_depth.value() << "\n";
+        cout << "Sampling Frequency: " << audioElement.sampling_frequency.value() << "\n";
+        cout << "Output Frequency: " << audioElement.output_frequency.value() << "\n";
+    }
+
+    cout << "Number of Frames: " << callback.num_frames << "\n";
+
     return 0;
 }

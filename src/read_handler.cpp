@@ -17,32 +17,30 @@ ReadHandler::~ReadHandler() {}
 
 
 Status ReadHandler::OnInfo(const ElementMetadata &metadata, const Info &info) {
-    cout << "Duration (ms): " << info.duration.value() << "\n";
-
+    video_len_ms = info.duration.value();
     return Status(Status::kOkCompleted);
 }
 
 Status ReadHandler::OnTrackEntry(const ElementMetadata &metadata, const TrackEntry &track_entry) {
-    cout << "Codec: " << track_entry.codec_id.value() << "\n";
-
     Element<Video> videoElement = track_entry.video;
-    if (videoElement.is_present()) {
-        Video video = videoElement.value();
-
-        cout << "Resolution: ";
-        cout << video.display_width.value() << "x" << video.display_height.value() << "\n";
+    if (!video_found && videoElement.is_present()) {
+        video_track = track_entry;
+        video_found = true;
     }
 
     Element<Audio> audioElement = track_entry.audio;
     if (audioElement.is_present()) {
-        Audio audio = audioElement.value();
-
-        cout << "Audio Bit Depth: ";
-        cout << audio.bit_depth.value() << "\n";
-
-        cout << "Output Frequency: ";
-        cout << audio.output_frequency.value() << "\n";
+        audio_track = track_entry;
+        audio_found = true;
     }
 
     return Status(Status::kOkCompleted);
+}
+
+Status ReadHandler::OnFrame(const FrameMetadata& metadata, Reader* reader, uint64_t* bytes_remaining) {
+    // After pausing, the first "frame" can have 0 bytes
+    if (*bytes_remaining == 0) return Status(Status::kOkCompleted);
+
+    num_frames++;
+    return Skip(reader, bytes_remaining);
 }
