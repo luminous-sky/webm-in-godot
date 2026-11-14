@@ -58,7 +58,8 @@ int main(int argc, char **argv) {
         cout << "Output Frequency: " << audioElement.output_frequency.value() << "\n";
     }
 
-    cout << "Number of Frames: " << callback.num_frames << "\n";
+    cout << "Number of Video Frames: " << callback.num_video_frames << "\n";
+    cout << "Number of Audio Frames: " << callback.num_audio_frames << "\n";
 
     return 0;
 }
