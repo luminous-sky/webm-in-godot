@@ -30,7 +30,7 @@ Status ReadHandler::OnTrackEntry(const ElementMetadata &metadata, const TrackEnt
     }
 
     Element<Audio> audioElement = track_entry.audio;
-    if (audioElement.is_present()) {
+    if (!audio_found && audioElement.is_present()) {
         audio_track = track_entry;
         audio_found = true;
     }
