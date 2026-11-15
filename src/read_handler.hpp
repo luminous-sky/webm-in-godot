@@ -4,6 +4,9 @@
 #include <string>
 #include <webm/callback.h>
 
+#include "decode_handler.hpp"
+
+
 using std::string, std::uint64_t;
 using namespace webm;
 
@@ -33,6 +36,8 @@ class ReadHandler : public Callback {
     private:
         bool next_frame_video{false};
         bool next_frame_audio{false};
+
+        DecodeHandler *decoder;
 
         Status HandleBlock(const Block &block);
 };

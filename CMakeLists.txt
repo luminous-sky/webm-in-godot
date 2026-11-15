@@ -8,6 +8,7 @@ target_sources(out
     PRIVATE
         src/main.cpp
         src/read_handler.cpp
+        src/decode_handler_vpx.cpp
 )
 target_include_directories(out
     PRIVATE thirdparty/include
@@ -16,7 +17,7 @@ target_link_directories(out
     PRIVATE thirdparty/lib
 )
 target_link_libraries(out
-    PRIVATE webm
+    PRIVATE webm vpx
 )
 
 target_compile_options(out

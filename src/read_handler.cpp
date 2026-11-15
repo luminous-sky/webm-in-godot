@@ -6,6 +6,7 @@
 #include <webm/dom_types.h>
 #include <webm/status.h>
 
+#include "decode_handler_vpx.hpp"
 #include "read_handler.hpp"
 
 
@@ -14,7 +15,9 @@ using namespace webm;
 
 
 ReadHandler::ReadHandler() {}
-ReadHandler::~ReadHandler() {}
+ReadHandler::~ReadHandler() {
+    if (decoder) delete decoder;
+}
 
 
 Status ReadHandler::OnInfo(const ElementMetadata &metadata, const Info &info) {
@@ -27,6 +30,10 @@ Status ReadHandler::OnTrackEntry(const ElementMetadata &metadata, const TrackEnt
     if (!video_found && videoElement.is_present()) {
         video_track = track_entry;
         video_found = true;
+
+        if (video_track.codec_id.value() == "V_VP9") {
+            decoder = new DecodeHandlerVpx(VP9);
+        }
     }
 
     Element<Audio> audioElement = track_entry.audio;
@@ -70,13 +77,34 @@ Status ReadHandler::OnSimpleBlockBegin(const ElementMetadata &metadata, const Si
 }
 
 
-Status ReadHandler::OnFrame(const FrameMetadata& metadata, Reader* reader, uint64_t* bytes_remaining) {
+Status ReadHandler::OnFrame(const FrameMetadata &metadata, Reader *reader, uint64_t *bytes_remaining) {
     // After pausing, the first "frame" can have 0 bytes
     if (*bytes_remaining == 0) return Status(Status::kOkCompleted);
     
     if (next_frame_video) {
         num_video_frames++;
-    } else if (next_frame_audio) {
+        
+        // Decode the first few frames
+        if (num_video_frames <= 64 && decoder) {
+            uint64_t dataRead = 0;
+            unsigned char *buf = new unsigned char[*bytes_remaining];
+
+            Status status = reader -> Read(*bytes_remaining, buf, &dataRead);
+            if (dataRead == *bytes_remaining) {
+                const unsigned char *data = buf;
+                decoder -> decodeFrame(data, *bytes_remaining);
+            } else {
+                cout << "Partial frame\n";
+            }
+
+            *bytes_remaining = 0;
+            delete[] buf;
+            
+            return status;
+        }
+    }
+    
+    if (next_frame_audio) {
         num_audio_frames++;
     }
     
