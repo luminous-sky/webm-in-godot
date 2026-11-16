@@ -46,7 +46,13 @@ Status ReadHandler::OnTrackEntry(const ElementMetadata &metadata, const TrackEnt
 }
 
 
-Status ReadHandler::HandleBlock(const Block &block) {
+Status ReadHandler::HandleBlockBegin(const Block &block) {
+    // Wait to decode the next frame
+    if (blockDecoded) {
+        blockDecoded = false;
+        return Status(Status::kOkPartial);
+    }
+
     next_frame_video = false;
     next_frame_audio = false;
     
@@ -69,38 +75,42 @@ Status ReadHandler::HandleBlock(const Block &block) {
 }
 
 Status ReadHandler::OnBlockBegin(const ElementMetadata &metadata, const Block &block, Action *action) {
-    return HandleBlock(block);
+    return HandleBlockBegin(block);
 }
 
 Status ReadHandler::OnSimpleBlockBegin(const ElementMetadata &metadata, const SimpleBlock &simple_block, Action *action) {
-    return HandleBlock(simple_block);
+    return HandleBlockBegin(simple_block);
 }
 
 
-Status ReadHandler::OnFrame(const FrameMetadata &metadata, Reader *reader, uint64_t *bytes_remaining) {
+Status ReadHandler::OnFrame(const FrameMetadata &metadata, Reader *reader, uint64_t *bytes_remaining) {    
     // After pausing, the first "frame" can have 0 bytes
     if (*bytes_remaining == 0) return Status(Status::kOkCompleted);
     
     if (next_frame_video) {
         num_video_frames++;
         
-        // Decode the first few frames
-        if (num_video_frames <= 64 && decoder) {
-            uint64_t dataRead = 0;
-            unsigned char *buf = new unsigned char[*bytes_remaining];
-
-            Status status = reader -> Read(*bytes_remaining, buf, &dataRead);
-            if (dataRead == *bytes_remaining) {
-                const unsigned char *data = buf;
-                decoder -> decodeFrame(data, *bytes_remaining);
-            } else {
-                cout << "Partial frame\n";
-            }
-
-            *bytes_remaining = 0;
-            delete[] buf;
+        // Decode one frame
+        if (decoder) {
+            cout << "Frame: " << num_video_frames << " -> " << *bytes_remaining << "\n";
+            unsigned int bufLen = *bytes_remaining;
+            unsigned char *buf = new unsigned char[bufLen];
+            unsigned char *cur = buf;
             
-            return status;
+            uint64_t dataRead = 0;
+            Status readerStatus;
+            do {
+                readerStatus = reader -> Read(*bytes_remaining, cur, &dataRead);
+                *bytes_remaining -= dataRead;
+                cur += dataRead;
+            } while (readerStatus.code == Status::kOkPartial);
+
+            const unsigned char *data = buf;
+            decoder -> decodeFrame(data, bufLen);
+            delete[] buf;
+
+            blockDecoded = true;
+            return Status(Status::kOkCompleted);
         }
     }
     

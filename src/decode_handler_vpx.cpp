@@ -19,35 +19,27 @@ DecodeHandlerVpx::DecodeHandlerVpx(VPX_CODEC codec) {
     }
 
     vpx_codec_dec_init(&context, interface, nullptr, 0);
-
-    outputFile = fopen("output_yuv_images", "wb");
 }
 
 
 DecodeHandlerVpx::~DecodeHandlerVpx() {
-    if (outputFile) fclose(outputFile);
     vpx_codec_destroy(&context);
 }
 
 
-const unsigned char *imgToYuvBuf(const vpx_image_t *img, unsigned int *bufSize);
-
 // Returns success
 bool DecodeHandlerVpx::decodeFrame(const unsigned char *data, unsigned int numData) {
-    if (vpx_codec_decode(&context, data, numData, nullptr, 0)) {
+    vpx_codec_err_t error;
+    if ((error = vpx_codec_decode(&context, data, numData, nullptr, 0))) {
         cout << "Error when decoding frame.\n";
+        cout << "Error: " << error << "\n";
         return false;
     }
 
     vpx_codec_iter_t iterator{};
     vpx_image_t *img = vpx_codec_get_frame(&context, &iterator);
     while (img) {
-        // Write to file for testing
-        unsigned int bufSize{};
-        const unsigned char *buf = imgToYuvBuf(img, &bufSize);
-        fwrite(buf, bufSize, 1, outputFile);
-        delete[] buf;
-
+        lastImage = img;
         img = vpx_codec_get_frame(&context, &iterator);
     }
 
@@ -56,7 +48,7 @@ bool DecodeHandlerVpx::decodeFrame(const unsigned char *data, unsigned int numDa
 
 // Returns a buffer containing the image's YUV data
 // This buffer needs to be deleted manually by the caller using delete[]
-const unsigned char *imgToYuvBuf(const vpx_image_t *img, unsigned int *bufSize) {
+const unsigned char *DecodeHandlerVpx::imgToYuvBuf(const vpx_image_t *img, unsigned int *bufSize) {
     // High bit depth formats have 16-bit buffers
     int pixelDensity = (img -> fmt & VPX_IMG_FMT_HIGHBITDEPTH) + 1;
 

@@ -21,6 +21,8 @@ class ReadHandler : public Callback {
         TrackEntry video_track;
         TrackEntry audio_track;
 
+        DecodeHandler *decoder;
+
 
         ReadHandler();
         virtual ~ReadHandler();
@@ -32,14 +34,13 @@ class ReadHandler : public Callback {
         virtual Status OnSimpleBlockBegin(const ElementMetadata &metadata, const SimpleBlock &simple_block, Action *action) override;
 
         virtual Status OnFrame(const FrameMetadata &metadata, Reader *reader, uint64_t *bytes_remaining) override;
-
+        
     private:
         bool next_frame_video{false};
         bool next_frame_audio{false};
 
-        DecodeHandler *decoder;
-
-        Status HandleBlock(const Block &block);
+        bool blockDecoded{false};
+        Status HandleBlockBegin(const Block &block);
 };
 
 #endif

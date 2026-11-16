@@ -33,8 +33,13 @@ int main(int argc, char **argv) {
     ReadHandler callback{};
     WebmParser parser{};
 
-    Status status = parser.Feed(&callback, &reader);
-    if (!status.completed_ok()) {
+    Status status{};
+    do {
+        status = parser.Feed(&callback, &reader);
+    } while (status.ok() && !status.completed_ok());
+
+    // Status status = parser.Feed(&callback, &reader);
+    if (!status.ok()) {
         cout << "Failed to parse file (" << status.code << ")\n";
         return 1;
     }

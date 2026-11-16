@@ -15,16 +15,15 @@ class DecodeHandlerVpx : public DecodeHandler {
         DecodeHandlerVpx(VPX_CODEC codec);
         virtual ~DecodeHandlerVpx();
 
+        vpx_image_t *getLastFrame();
         virtual bool decodeFrame(const unsigned char *data, unsigned int numData) override;
-    
+
+        const unsigned char *imgToYuvBuf(const vpx_image_t *img, unsigned int *bufSize);
     private:
         vpx_codec_ctx_t context{};
         vpx_codec_iface_t *interface{};
 
         vpx_image_t *lastImage{};
-
-        // Output file for testing purposes
-        FILE *outputFile;
 };
 
 #endif
