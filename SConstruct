@@ -8,7 +8,7 @@ import sys
 from methods import print_error
 
 
-libname = "gdexample"
+libname = "webmextension"
 projectdir = "project"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
@@ -18,7 +18,8 @@ localEnv = Environment(tools=["default"], PLATFORM="")
 # explicitly specify "enabled_classes" which disables all other classes.
 # Modify the example file as needed and uncomment the line below or
 # manually specify the build_profile parameter when running SCons.
-localEnv["build_profile"] = "build_profile.json"
+#
+# localEnv["build_profile"] = "build_profile.json"
 
 customs = ["custom.py"]
 customs = [os.path.abspath(path) for path in customs]
@@ -37,15 +38,23 @@ Run the following command to download godot-cpp:
     git submodule update --init --recursive""")
     sys.exit(1)
 
-env = SConscript("godot-cpp/SConstruct", {"api_version": 4.3, "env": env, "customs": customs})
+env = SConscript("godot-cpp/SConstruct", {"api_version": 4.2, "env": env, "customs": customs})
 
-env.Append(CPPPATH=["src/"])
+env.Append(
+    CPPPATH=["src/", "thirdparty/include"],
+)
+env.Append(
+    LIBPATH=["thirdparty/lib"],
+    LIBS=["webm", "vpx"]
+)
 
 # Only use specific source files
 # sources = Glob("src/*.cpp")
 sources = [
-    "src/gdexample.cpp",
-    "src/register_types.cpp"
+    "src/decode_handler_vpx.cpp",
+    "src/read_handler.cpp",
+    "src/gdextension/video_stream_playback_vpx.cpp",
+    "src/gdextension/register_types.cpp",
 ]
 
 if env["target"] in ["editor", "template_debug"]:

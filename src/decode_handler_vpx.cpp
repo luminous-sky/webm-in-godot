@@ -23,6 +23,11 @@ DecodeHandlerVpx::~DecodeHandlerVpx() {
 }
 
 
+vpx_image_t *DecodeHandlerVpx::getLastFrame() {
+    return lastImage;
+}
+
+
 // Returns success
 bool DecodeHandlerVpx::decodeFrame(const unsigned char *data, unsigned int numData) {
     vpx_codec_err_t error;
@@ -94,5 +99,57 @@ const unsigned char *DecodeHandlerVpx::imgToYuvBuf(const vpx_image_t *img, unsig
     }
 
     const unsigned char *final = buf;
+    return final;
+}
+
+// Returns a buffer containing the image's RGB data
+// This buffer needs to be deleted manually by the caller using delete[]
+const unsigned char *DecodeHandlerVpx::imgToRgbBuf(const vpx_image_t *img, unsigned int *bufSize, unsigned int *bufWidth, unsigned int *bufHeight) {
+    // Skip handling high bit depth formats (16-bit buffers)
+    if (img -> fmt & VPX_IMG_FMT_HIGHBITDEPTH) return nullptr;
+    
+    // Only handle NV12 formats (interlaced UV planes)
+    if (img -> fmt == VPX_IMG_FMT_NV12) return nullptr;
+
+
+    // RGBA8 format
+    *bufWidth = img -> d_w;
+    *bufHeight = img -> d_h;
+    *bufSize = 4 * (*bufWidth) * (*bufHeight);
+    unsigned char *rgbBuf = new unsigned char[*bufSize];
+    unsigned char *cur = rgbBuf;
+
+    unsigned char *yPlane = img -> planes[0];
+    unsigned char *uPlane = img -> planes[1];
+    unsigned char *vPlane = img -> planes[2];
+
+    int yStride = img -> stride[0];
+    int uStride = img -> stride[1];
+    int vStride = img -> stride[2];
+
+    for (unsigned int imgY = 0; imgY < img -> d_h; imgY++) {        
+        for (unsigned int imgX = 0; imgX < img -> d_w; imgX++) {
+            // UV planes are interlaced, so they have half the data
+            int y = yPlane[imgY * yStride + imgX];
+            int u = uPlane[(imgY >> 1) * uStride + (imgX >> 1)];
+            int v = vPlane[(imgY >> 1) * vStride + (imgX >> 1)];
+
+            // BT.709 constants
+            unsigned char r = (unsigned char) (1.0*y + 1.5748*v);
+            unsigned char g = (unsigned char) (1.0*y - 0.1873*u - 0.4681*v);
+            unsigned char b = (unsigned char) (1.0*y + 1.8556*u);
+            unsigned char a = 1;
+
+            cur[0] = r;
+            cur[1] = g;
+            cur[2] = b;
+            cur[3] = a;
+
+            cur += 4;
+        }
+    }
+
+
+    const unsigned char *final = rgbBuf;
     return final;
 }
