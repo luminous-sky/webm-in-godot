@@ -9,6 +9,8 @@ A program aiming to add additional webm video support to Godot.
 
 ## Running
 
+Releases of the program can be found at https://fractured-sky.itch.io/webm-in-godot.
+
 Currently, the standalone VP9 decoder must be ran from the **command line** and supports two input formats:
 
 - An input WEBM file (`./out video.webm`)
