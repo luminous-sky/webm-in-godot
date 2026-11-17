@@ -4,6 +4,9 @@ A program aiming to add additional webm video support to Godot.
 
 **NOTE:** This project is currently a work-in-progress with only a **standalone VP9 decoder** for WEBM outside of Godot which is in the process of being ported to GDExtension.
 
+![Decoder Output](./screenshots/output_demo.png)
+![Video Demo](./screenshots/video_demo.png)
+
 ## Running
 
 Currently, the standalone VP9 decoder must be ran from the **command line** and supports two input formats:
