@@ -1,6 +1,6 @@
 # webm-in-godot
 
-A program aiming to add additional webm video support to Godot.
+A program aiming to add additional webm video support to Godot to support more common video formats as Godot only currently supports the OGG Theora codec which some programs are unable to export to. 
 
 **NOTE:** This project is currently a work-in-progress with only a **standalone VP9 decoder** for WEBM outside of Godot which is in the process of being ported to GDExtension.
 
