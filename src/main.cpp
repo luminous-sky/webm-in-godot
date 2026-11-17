@@ -8,6 +8,7 @@
 #include <webm/webm_parser.h>
 
 #include "read_handler.hpp"
+#include "decode_handler_vpx.hpp"
 
 
 using std::cout, std::string, std::ifstream;
@@ -17,8 +18,8 @@ using namespace webm;
 int main(int argc, char **argv) {
     cout << "Hello, world!\n";
 
-    if (argc != 2) {
-        cout << "Usage:\n\t./out\tvideo_file\n";
+    if (argc < 2 || argc > 3) {
+        cout << "Usage:\n\t./out\tvideo_file\tyuv_images_file (optional)\n";
         return 0;
     }
 
@@ -29,13 +30,38 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    FILE *yuvImages = nullptr;
+    if (argc == 3) {
+        yuvImages = fopen(argv[2], "wb");
+
+        if (!yuvImages) {
+            fclose(video);
+
+            cout << "Failed to open " << argv[2] << ".\n";
+            return 1;
+        }
+    }
+
     FileReader reader{video};
     ReadHandler callback{};
     WebmParser parser{};
 
+    int count = 0;
     Status status{};
     do {
         status = parser.Feed(&callback, &reader);
+
+        // Save first 64 frames
+        if (yuvImages && count < 64) {
+            DecodeHandlerVpx *decoderVpx = (DecodeHandlerVpx *) callback.decoder;
+
+            unsigned int bufSize = 0;
+            const unsigned char *buf = decoderVpx -> imgToYuvBuf(decoderVpx -> getLastFrame(), &bufSize);
+            fwrite(buf, bufSize, 1, yuvImages);
+            delete[] buf;
+
+            count++;
+        }
     } while (status.ok() && !status.completed_ok());
 
     // Status status = parser.Feed(&callback, &reader);
