@@ -1,14 +1,10 @@
-#include <cstdio>
 #include <cstring>
-#include <iostream>
 #include <vpx/vpx_codec.h>
 #include <vpx/vpx_decoder.h>
 #include <vpx/vp8dx.h>
 #include <vpx/vpx_image.h>
 
 #include "decode_handler_vpx.hpp"
-
-using std::cout;
 
 
 DecodeHandlerVpx::DecodeHandlerVpx(VPX_CODEC codec) {
@@ -31,8 +27,6 @@ DecodeHandlerVpx::~DecodeHandlerVpx() {
 bool DecodeHandlerVpx::decodeFrame(const unsigned char *data, unsigned int numData) {
     vpx_codec_err_t error;
     if ((error = vpx_codec_decode(&context, data, numData, nullptr, 0))) {
-        cout << "Error when decoding frame.\n";
-        cout << "Error: " << error << "\n";
         return false;
     }
 

@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include <webm/callback.h>
 #include <webm/element.h>
 #include <webm/id.h>
@@ -10,7 +8,6 @@
 #include "read_handler.hpp"
 
 
-using std::cout;
 using namespace webm;
 
 
@@ -92,7 +89,6 @@ Status ReadHandler::OnFrame(const FrameMetadata &metadata, Reader *reader, uint6
         
         // Decode one frame
         if (decoder) {
-            cout << "Frame: " << num_video_frames << " -> " << *bytes_remaining << "\n";
             unsigned int bufLen = *bytes_remaining;
             unsigned char *buf = new unsigned char[bufLen];
             unsigned char *cur = buf;

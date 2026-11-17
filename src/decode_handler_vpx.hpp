@@ -1,7 +1,6 @@
 #ifndef DECODE_HANDLER_VPX_HPP
 #define DECODE_HANDLER_VPX_HPP
 
-#include <cstdio>
 #include <vpx/vpx_codec.h>
 
 #include "decode_handler.hpp"
