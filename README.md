@@ -2,7 +2,26 @@
 
 A program aiming to add additional webm video support to Godot.
 
-**NOTE:** This project is currently a work-in-progress with only a standalone VP9 decoder for WEBM outside of Godot which is in the process of being ported to GDExtension.
+**NOTE:** This project is currently a work-in-progress with only a **standalone VP9 decoder** for WEBM outside of Godot which is in the process of being ported to GDExtension.
+
+## Running
+
+Currently, the standalone VP9 decoder must be ran from the **command line** and supports two input formats:
+
+- An input WEBM file (`./out video.webm`)
+- An input WEBM file and an output file for the first 64 raw decoded images (`./out video.webm output_images`)
+
+After the decoder finishes parsing all of the frames, basic information about the video file is outputted to the console.
+
+If an output file was specified, it can be converted back into a video using ffmpeg with the following command:
+
+```sh
+# RESOLUTION is the original video's resolution (such as 1920x1080)
+# FRAMERATE is the original video's framerate (typically 30 or 60)
+ffmpeg -f rawvideo -s RESOLUTION -pix_fmt yuv420p -framerate FRAMERATE -i output_images -c:v libvpx-vp9 -an out.webm
+```
+
+The output video `out.webm` can then be opened in a normal video player.
 
 ## External dependencies
 
