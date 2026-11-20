@@ -9,14 +9,11 @@
 using namespace godot;
 
 
-static Ref<ResourceFormatLoaderVpx> resource_loader_vpx;
-
 void initialize_example_module(ModuleInitializationLevel p_level) {
     if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) return
 
     GDREGISTER_CLASS(VideoStreamVpx);
     GDREGISTER_CLASS(VideoStreamPlaybackVpx);
-    GDREGISTER_CLASS(ResourceFormatLoaderVpx);
 }
 
 void uninitialize_example_module(ModuleInitializationLevel p_level) {

@@ -2,7 +2,6 @@
 #define VIDEO_STREAM_VPX_HPP
 
 #include <godot_cpp/classes/file_access.hpp>
-#include <godot_cpp/classes/resource_format_loader.hpp>
 #include <godot_cpp/classes/video_stream_playback.hpp>
 #include <godot_cpp/classes/video_stream_player.hpp>
 #include <godot_cpp/classes/video_stream.hpp>
@@ -76,18 +75,5 @@ class VideoStreamVpx : public VideoStream {
         }
 };
 
-
-class ResourceFormatLoaderVpx : public ResourceFormatLoader {
-    GDCLASS(ResourceFormatLoaderVpx, ResourceFormatLoader);
-
-    protected:
-        static void _bind_methods() {};
-
-    public:
-        virtual Variant _load(const String &path, const String &original_path = "", bool use_sub_threads = false, int32_t cache_mode = CACHE_MODE_REUSE) const override;
-        virtual PackedStringArray _get_recognized_extensions() const override;
-        virtual bool _handles_type(const StringName &type) const override;
-        virtual String _get_resource_type(const String &path) const override;
-};
 
 #endif

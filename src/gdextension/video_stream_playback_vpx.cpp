@@ -92,35 +92,3 @@ void VideoStreamPlaybackVpx::_update(double delta) {
 
 VideoStreamVpx::VideoStreamVpx() {}
 VideoStreamVpx::~VideoStreamVpx() {}
-
-
-
-Variant ResourceFormatLoaderVpx::_load(const String &path, const String &original_path, bool use_sub_threads, int32_t cache_mode) const {
-    Ref<FileAccess> f = FileAccess::open(path, FileAccess::READ);
-    if (f.is_null()) {
-        return Ref<Resource>();
-    }
-
-    Ref<VideoStreamVpx> video;
-    video.instantiate();
-    video -> set_file(f -> get_path());
-
-    return video;
-}
-
-PackedStringArray ResourceFormatLoaderVpx::_get_recognized_extensions() const {
-    PackedStringArray exts{{"webm"}};
-    return exts;
-}
-
-bool ResourceFormatLoaderVpx::_handles_type(const StringName &type) const {
-    return (type == StringName{"VideoStreamVpx"} || ClassDB::is_parent_class(type, "VideoStreamVpx"));
-}
-
-String ResourceFormatLoaderVpx::_get_resource_type(const String &path) const {
-    if (path.get_extension() == StringName{"webm"}) {
-        return "ResourceFormatLoaderVpx";
-    }
-
-    return "";
-}
