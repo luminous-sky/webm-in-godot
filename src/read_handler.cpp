@@ -90,7 +90,7 @@ Status ReadHandler::OnFrame(const FrameMetadata &metadata, Reader *reader, uint6
         num_video_frames++;
         
         // Decode one frame
-        if (decoder) {
+        if (decoder && decoder -> isInitialized) {
             unsigned int bufLen = *bytes_remaining;
             unsigned char *buf = new unsigned char[bufLen];
             unsigned char *cur = buf;

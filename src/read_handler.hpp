@@ -21,7 +21,7 @@ class ReadHandler : public Callback {
         TrackEntry video_track;
         TrackEntry audio_track;
 
-        DecodeHandler *decoder;
+        DecodeHandler *decoder{nullptr};
 
 
         ReadHandler();
