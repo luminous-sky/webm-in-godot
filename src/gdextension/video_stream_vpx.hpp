@@ -8,7 +8,7 @@
 #include <godot_cpp/core/memory.hpp>
 #include <godot_cpp/variant/string.hpp>
 
-#include <webm/file_reader.h>
+#include "fileaccess_reader.hpp"
 #include <webm/webm_parser.h>
 #include "../read_handler.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
@@ -25,10 +25,10 @@ class VideoStreamPlaybackVpx : public VideoStreamPlayback {
     private:
         bool playing{false};
 
-        FILE *file;
+        Ref<FileAccess> file;
 
         Status readerStatus;
-        FileReader reader;
+        FileAccessReader reader;
         ReadHandler callback;
         WebmParser parser;
 
@@ -69,8 +69,8 @@ class VideoStreamVpx : public VideoStream {
 
         virtual Ref<VideoStreamPlayback> _instantiate_playback() override {
             Ref<VideoStreamPlaybackVpx> playback = memnew(VideoStreamPlaybackVpx);
-            playback -> set_file(get_file());
 
+            playback -> set_file(get_file());
             return playback;
         }
 };

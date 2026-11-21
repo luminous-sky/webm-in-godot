@@ -1,4 +1,3 @@
-#include <cstdio>
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/classes/image.hpp>
 #include <godot_cpp/core/class_db.hpp>
@@ -20,18 +19,20 @@ VideoStreamPlaybackVpx::VideoStreamPlaybackVpx() {
 }
 
 VideoStreamPlaybackVpx::~VideoStreamPlaybackVpx() {
-    if (file) fclose(file);
     if (decodedData) delete[] decodedData;
 }
 
 void VideoStreamPlaybackVpx::set_file(const String &filename) {
-    const char *filename_cstr = filename.utf8().get_data();
-    file = fopen(filename_cstr, "rb");
-    if (file) {
-        reader = FileReader{file};
-    } else {
-        ERR_FAIL_COND_MSG(file == nullptr, "Failed to open '" + filename + "'.");
+    // When VideoStreamVpx is initially made, it calls set_file with a blank filename
+    if (filename.length() == 0) return;
+
+    file = FileAccess::open(filename, FileAccess::READ);
+
+    if (file.is_null()) {
+        ERR_FAIL_COND_MSG(file.is_null(), "Failed to open '" + filename + "'.");
     }
+
+    reader = FileAccessReader{file};
 }
 
 
@@ -68,7 +69,7 @@ bool VideoStreamPlaybackVpx::_is_playing() const {
 
 
 void VideoStreamPlaybackVpx::_update(double delta) {
-    if (!file) return;
+    if (file.is_null() || file -> eof_reached()) return;
     if (!playing) return;
 
     if (readerStatus.completed_ok() || !readerStatus.ok()) return;
