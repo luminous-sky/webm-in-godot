@@ -6,6 +6,7 @@
 #include "decode_handler.hpp"
 
 enum VPX_CODEC {
+    VP8,
     VP9,
 };
 

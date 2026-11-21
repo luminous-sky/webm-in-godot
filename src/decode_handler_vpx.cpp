@@ -9,12 +9,17 @@
 
 DecodeHandlerVpx::DecodeHandlerVpx(VPX_CODEC codec) {
     switch (codec) {
+        case VP8:
+            interface = vpx_codec_vp8_dx();
+            break;
         case VP9:
             interface = vpx_codec_vp9_dx();
             break;
     }
 
-    vpx_codec_dec_init(&context, interface, nullptr, 0);
+    if (interface) {
+        vpx_codec_dec_init(&context, interface, nullptr, 0);
+    }
 }
 
 
