@@ -105,15 +105,21 @@ cython_debug/
 
 
 # SCons ignores
+compile_commands.json
 .sconsign.dblite
 *.os
 
 # Build ignores
 build/
 bin/
+gen/
 
 # Ignore third-party code
 thirdparty/
+
+# Ignore miscellaneous files
+nocommit/
+.vscode/
 
 # Hackatime ignores
 .wakatime-project

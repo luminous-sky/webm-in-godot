@@ -31,3 +31,6 @@ if(DEBUG)
         PRIVATE -fsanitize=address
     )
 endif()
+
+set_target_properties(out PROPERTIES INSTALL_RPATH "$ORIGIN")
+install(TARGETS out DESTINATION bin)

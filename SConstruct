@@ -51,6 +51,7 @@ env.Append(
 # Only use specific source files
 # sources = Glob("src/*.cpp")
 sources = [
+    "src/gdextension/fileaccess_reader.cpp",
     "src/decode_handler_vpx.cpp",
     "src/read_handler.cpp",
     "src/gdextension/video_stream_playback_vpx.cpp",
