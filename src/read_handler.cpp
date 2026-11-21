@@ -28,7 +28,9 @@ Status ReadHandler::OnTrackEntry(const ElementMetadata &metadata, const TrackEnt
         video_track = track_entry;
         video_found = true;
 
-        if (video_track.codec_id.value() == "V_VP9") {
+        if (video_track.codec_id.value() == "V_VP8") {
+            decoder = new DecodeHandlerVpx(VP8);
+        } else if (video_track.codec_id.value() == "V_VP9") {
             decoder = new DecodeHandlerVpx(VP9);
         }
     }
