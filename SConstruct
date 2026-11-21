@@ -38,7 +38,7 @@ Run the following command to download godot-cpp:
     git submodule update --init --recursive""")
     sys.exit(1)
 
-env = SConscript("godot-cpp/SConstruct", {"api_version": 4.2, "env": env, "customs": customs})
+env = SConscript("godot-cpp/SConstruct", {"api_version": 4.4, "env": env, "customs": customs})
 
 env.Append(
     CPPPATH=["src/", "thirdparty/include"],
