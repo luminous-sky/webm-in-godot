@@ -4,6 +4,8 @@
 // Abstract class
 class DecodeHandler {
     public:
+        bool isInitialized{false};
+
         virtual ~DecodeHandler() = default;
 
         virtual bool decodeFrame(const unsigned char *data, unsigned int numData) = 0;

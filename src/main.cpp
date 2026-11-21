@@ -51,8 +51,16 @@ int main(int argc, char **argv) {
     do {
         status = parser.Feed(&callback, &reader);
 
+        // Output status information on the first pass
+        if (yuvImages && count == 0) {
+            if (!callback.decoder || !(callback.decoder -> isInitialized)) {
+                cout << "Failed to decode the video's encoded data.\n";
+                count++;
+            }
+        }
+
         // Save first 64 frames
-        if (yuvImages && count < 64) {
+        if (yuvImages && count < 64 && callback.decoder && callback.decoder -> isInitialized) {
             DecodeHandlerVpx *decoderVpx = (DecodeHandlerVpx *) callback.decoder;
 
             unsigned int bufSize = 0;

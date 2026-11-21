@@ -19,6 +19,7 @@ DecodeHandlerVpx::DecodeHandlerVpx(VPX_CODEC codec) {
     }
 
     if (interface) {
+        isInitialized = true;
         vpx_codec_dec_init(&context, interface, nullptr, 0);
     }
 }
@@ -36,6 +37,8 @@ vpx_image_t *DecodeHandlerVpx::getLastFrame() {
 
 // Returns success
 bool DecodeHandlerVpx::decodeFrame(const unsigned char *data, unsigned int numData) {
+    if (!isInitialized) return false;
+
     vpx_codec_err_t error;
     if ((error = vpx_codec_decode(&context, data, numData, nullptr, 0))) {
         return false;

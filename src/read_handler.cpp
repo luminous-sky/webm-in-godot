@@ -96,7 +96,7 @@ Status ReadHandler::OnFrame(const FrameMetadata &metadata, Reader *reader, uint6
             skip_frames--;
         }
 
-        if (decoder && (!skip_frames || !next_frame_can_skip)) {
+        if (decoder && decoder -> isInitialized && (!skip_frames || !next_frame_can_skip)) {
             unsigned int bufLen = *bytes_remaining;
             unsigned char *buf = new unsigned char[bufLen];
             unsigned char *cur = buf;
