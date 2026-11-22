@@ -35,9 +35,13 @@ class ReadHandler : public Callback {
 
         virtual Status OnFrame(const FrameMetadata &metadata, Reader *reader, uint64_t *bytes_remaining) override;
         
+        void skipFrames(unsigned int num_frames);
     private:
         bool next_frame_video{false};
         bool next_frame_audio{false};
+        bool next_frame_can_skip{false};
+
+        unsigned int skip_frames{0};
 
         bool blockDecoded{false};
         Status HandleBlockBegin(const Block &block);

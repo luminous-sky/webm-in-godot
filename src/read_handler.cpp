@@ -72,10 +72,12 @@ Status ReadHandler::HandleBlockBegin(const Block &block) {
 }
 
 Status ReadHandler::OnBlockBegin(const ElementMetadata &metadata, const Block &block, Action *action) {
+    next_frame_can_skip = false;
     return HandleBlockBegin(block);
 }
 
 Status ReadHandler::OnSimpleBlockBegin(const ElementMetadata &metadata, const SimpleBlock &simple_block, Action *action) {
+    next_frame_can_skip = simple_block.is_discardable;
     return HandleBlockBegin(simple_block);
 }
 
@@ -88,7 +90,11 @@ Status ReadHandler::OnFrame(const FrameMetadata &metadata, Reader *reader, uint6
         num_video_frames++;
         
         // Decode one frame
-        if (decoder) {
+        if (skip_frames) {
+            skip_frames--;
+        }
+
+        if (decoder && (!skip_frames || !next_frame_can_skip)) {
             unsigned int bufLen = *bytes_remaining;
             unsigned char *buf = new unsigned char[bufLen];
             unsigned char *cur = buf;
@@ -115,4 +121,9 @@ Status ReadHandler::OnFrame(const FrameMetadata &metadata, Reader *reader, uint6
     }
     
     return Skip(reader, bytes_remaining);
+}
+
+
+void ReadHandler::skipFrames(unsigned int num_frames) {
+    skip_frames = num_frames;
 }

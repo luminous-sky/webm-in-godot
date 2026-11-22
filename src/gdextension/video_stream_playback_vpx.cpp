@@ -18,11 +18,6 @@ using namespace godot;
 VideoStreamPlaybackVpx::VideoStreamPlaybackVpx() {
     playing = false;
     texture.instantiate();
-
-    Ref<Image> img = Image::create_empty(1920, 1080, false, Image::FORMAT_RGBA8);
-    texture -> set_image(img);
-
-    print_line("Texture image dimensions: ", texture -> get_image() -> get_size());
 }
 
 VideoStreamPlaybackVpx::~VideoStreamPlaybackVpx() {
@@ -47,6 +42,9 @@ void VideoStreamPlaybackVpx::set_file(const String &filename) {
 
     reader = FileAccessReader{file};
     load_next_frame();
+
+    Ref<Image> img = Image::create_empty(decodedWidth, decodedHeight, false, Image::FORMAT_RGBA8);
+    texture -> set_image(img);
 }
 
 
@@ -94,8 +92,8 @@ void VideoStreamPlaybackVpx::_update(double delta) {
 
     print_line("Updating");
 
-    // Placeholder 60 FPS used
-    videoTime += 60*delta;
+    // Placeholder FPS used
+    videoTime += 30*delta;
     if (videoTime < 1.0) return;
     videoTime -= 1.0;
     
@@ -119,7 +117,16 @@ void VideoStreamPlaybackVpx::_update(double delta) {
         return;
     }
 
+    // Drop frames as needed
+    unsigned int offset = (unsigned int) videoTime;
+    videoTime -= offset;
+
+    print_line("Dropping ", offset, " frames");
+
+    callback.skipFrames(offset);
     load_next_frame();
+
+    print_line("Frame: ", callback.num_video_frames);
 }
 
 
