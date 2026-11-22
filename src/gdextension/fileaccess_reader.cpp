@@ -15,6 +15,11 @@ FileAccessReader::FileAccessReader() {
     file = nullptr;
 }
 
+FileAccessReader::~FileAccessReader() {
+    // Remove reference to file so that Godot can clean it up
+    if (file != nullptr) file -> unreference();
+}
+
 // Creates an empty reader which will read from FileAccess
 FileAccessReader::FileAccessReader(Ref<FileAccess> init_file) {
     file = init_file;

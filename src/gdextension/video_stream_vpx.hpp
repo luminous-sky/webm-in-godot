@@ -11,7 +11,8 @@
 #include "fileaccess_reader.hpp"
 #include <webm/webm_parser.h>
 #include "../read_handler.hpp"
-#include "godot_cpp/classes/wrapped.hpp"
+#include <godot_cpp/classes/image_texture.hpp>
+#include <godot_cpp/classes/wrapped.hpp>
 
 #include <vpx/vpx_codec.h>
 
@@ -24,15 +25,16 @@ class VideoStreamPlaybackVpx : public VideoStreamPlayback {
 
     private:
         bool playing{false};
+        Ref<ImageTexture> texture{nullptr};
 
-        Ref<FileAccess> file;
+        Ref<FileAccess> file{nullptr};
 
-        Status readerStatus;
-        FileAccessReader reader;
-        ReadHandler callback;
-        WebmParser parser;
+        Status readerStatus{};
+        FileAccessReader reader{};
+        ReadHandler callback{};
+        WebmParser parser{};
 
-        const unsigned char *decodedData;
+        const unsigned char *decodedData{nullptr};
         unsigned int decodedDataLen;
         unsigned int decodedWidth;
         unsigned int decodedHeight;
@@ -50,6 +52,8 @@ class VideoStreamPlaybackVpx : public VideoStreamPlayback {
 
         virtual void _play() override;
         virtual void _stop() override;
+
+        virtual Ref<Texture2D> _get_texture() const override;
 
         virtual bool _is_playing() const override;
 

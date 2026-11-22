@@ -17,6 +17,9 @@ class FileAccessReader : public Reader {
         // Creates an empty reader which will read from FileAccess
         FileAccessReader(Ref<FileAccess> init_file);
 
+        // Cleans up variables
+        virtual ~FileAccessReader() override;
+
         virtual Status Read(size_t num_to_read, uint8_t* buffer, uint64_t* num_actually_read) override;
         virtual Status Skip(uint64_t num_to_skip, uint64_t* num_actually_skipped) override;
 
