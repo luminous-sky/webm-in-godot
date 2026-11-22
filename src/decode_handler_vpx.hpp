@@ -17,6 +17,9 @@ class DecodeHandlerVpx : public DecodeHandler {
 
         vpx_image_t *getLastFrame();
         virtual bool decodeFrame(const unsigned char *data, unsigned int numData) override;
+        virtual bool queueFrame(const unsigned char *data, unsigned int numData) override;
+
+        virtual bool dequeueNextFrame() override;
 
         const unsigned char *imgToYuvBuf(const vpx_image_t *img, unsigned int *bufSize);
         const unsigned char *imgToRgbBuf(const vpx_image_t *img, unsigned int *bufSize, unsigned int *bufWidth, unsigned int *bufHeight);

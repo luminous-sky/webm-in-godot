@@ -61,6 +61,7 @@ void VideoStreamPlaybackVpx::load_next_frame() {
     readerStatus = parser.Feed(&callback, &reader);
     DecodeHandlerVpx *decoder = (DecodeHandlerVpx *) callback.decoder;
 
+    decoder -> dequeueNextFrame();
     if (decoder -> getLastFrame() != nullptr) {
         decodedData = decoder -> imgToRgbBuf(decoder -> getLastFrame(), &decodedDataLen, &decodedWidth, &decodedHeight);
         hasVideo = true;
@@ -93,8 +94,7 @@ void VideoStreamPlaybackVpx::_update(double delta) {
 
     print_line("Updating");
 
-    // Placeholder FPS used
-    videoTime += 30*delta;
+    videoTime += 30.0*delta;
     if (videoTime < 1.0) return;
     videoTime -= 1.0;
     
@@ -123,7 +123,7 @@ void VideoStreamPlaybackVpx::_update(double delta) {
 
     print_line("Dropping ", offset, " frames");
 
-    callback.skipFrames(offset);
+    callback.processFrames(offset, Action::kSkip);
     load_next_frame();
 
     print_line("Frame: ", callback.num_video_frames);

@@ -36,13 +36,33 @@ vpx_image_t *DecodeHandlerVpx::getLastFrame() {
 
 
 // Returns success
-bool DecodeHandlerVpx::decodeFrame(const unsigned char *data, unsigned int numData) {
+bool DecodeHandlerVpx::queueFrame(const unsigned char *data, unsigned int numData) {
     if (!isInitialized) return false;
 
     vpx_codec_err_t error;
     if ((error = vpx_codec_decode(&context, data, numData, nullptr, 0))) {
         return false;
     }
+
+    return true;
+}
+
+// Returns success
+bool DecodeHandlerVpx::dequeueNextFrame() {
+    vpx_codec_iter_t iterator{};
+    
+    vpx_image_t *img = vpx_codec_get_frame(&context, &iterator);
+    if (img != nullptr) {
+        lastImage = img;
+        return true;
+    }
+
+    return false;
+}
+
+// Returns success
+bool DecodeHandlerVpx::decodeFrame(const unsigned char *data, unsigned int numData) {
+    if (!queueFrame(data, numData)) return false;
 
     vpx_codec_iter_t iterator{};
     vpx_image_t *img = vpx_codec_get_frame(&context, &iterator);

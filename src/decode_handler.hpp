@@ -9,6 +9,9 @@ class DecodeHandler {
         virtual ~DecodeHandler() = default;
 
         virtual bool decodeFrame(const unsigned char *data, unsigned int numData) = 0;
+        virtual bool queueFrame(const unsigned char *data, unsigned int numData) = 0;
+
+        virtual bool dequeueNextFrame() = 0;
 };
 
 #endif

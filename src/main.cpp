@@ -62,7 +62,8 @@ int main(int argc, char **argv) {
         // Save first 64 frames
         if (yuvImages && count < 64 && callback.decoder && callback.decoder -> isInitialized) {
             DecodeHandlerVpx *decoderVpx = (DecodeHandlerVpx *) callback.decoder;
-
+            decoderVpx -> dequeueNextFrame();
+            
             unsigned int bufSize = 0;
             const unsigned char *buf = decoderVpx -> imgToYuvBuf(decoderVpx -> getLastFrame(), &bufSize);
             fwrite(buf, bufSize, 1, yuvImages);

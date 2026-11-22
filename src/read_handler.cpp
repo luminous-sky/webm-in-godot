@@ -47,7 +47,7 @@ Status ReadHandler::OnTrackEntry(const ElementMetadata &metadata, const TrackEnt
 
 Status ReadHandler::HandleBlockBegin(const Block &block) {
     // Wait to decode the next frame
-    if (blockDecoded) {
+    if (blockDecoded && !frames_left) {
         blockDecoded = false;
         return Status(Status::kOkPartial);
     }
@@ -91,12 +91,11 @@ Status ReadHandler::OnFrame(const FrameMetadata &metadata, Reader *reader, uint6
     if (next_frame_video) {
         num_video_frames++;
         
-        // Decode one frame
-        if (skip_frames) {
-            skip_frames--;
+        if (frames_left) {
+            frames_left--;
         }
 
-        if (decoder && decoder -> isInitialized && (!skip_frames || !next_frame_can_skip)) {
+        if (decoder && decoder -> isInitialized && (!next_frame_can_skip || decode_frames)) {
             unsigned int bufLen = *bytes_remaining;
             unsigned char *buf = new unsigned char[bufLen];
             unsigned char *cur = buf;
@@ -110,7 +109,7 @@ Status ReadHandler::OnFrame(const FrameMetadata &metadata, Reader *reader, uint6
             } while (readerStatus.code == Status::kOkPartial);
 
             const unsigned char *data = buf;
-            decoder -> decodeFrame(data, bufLen);
+            decoder -> queueFrame(data, bufLen);
             delete[] buf;
 
             blockDecoded = true;
@@ -126,6 +125,7 @@ Status ReadHandler::OnFrame(const FrameMetadata &metadata, Reader *reader, uint6
 }
 
 
-void ReadHandler::skipFrames(unsigned int num_frames) {
-    skip_frames = num_frames;
+void ReadHandler::processFrames(unsigned int num_frames, Action action) {
+    frames_left = num_frames;
+    decode_frames = (action == Action::kRead);
 }
