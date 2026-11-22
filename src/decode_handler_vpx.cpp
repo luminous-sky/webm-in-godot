@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include <vpx/vpx_codec.h>
 #include <vpx/vpx_decoder.h>
@@ -135,9 +136,13 @@ const unsigned char *DecodeHandlerVpx::imgToRgbBuf(const vpx_image_t *img, unsig
             int v = vPlane[(imgY >> 1) * vStride + (imgX >> 1)];
 
             // BT.709 constants
-            unsigned char r = (unsigned char) (1.0*y + 1.5748*v);
-            unsigned char g = (unsigned char) (1.0*y - 0.1873*u - 0.4681*v);
-            unsigned char b = (unsigned char) (1.0*y + 1.8556*u);
+            double r_f = (1.164*(y - 16) + 1.596*(v - 128));
+            double g_f = (1.164*(y - 16) - 0.391*(u - 128) - 0.813*(v - 128));
+            double b_f = (1.164*(y - 16) + 2.018*(u - 128));
+
+            unsigned char r = (unsigned char) std::clamp(r_f, 0.0, 255.0);
+            unsigned char g = (unsigned char) std::clamp(g_f, 0.0, 255.0);
+            unsigned char b = (unsigned char) std::clamp(b_f, 0.0, 255.0);
             unsigned char a = 255;
 
             cur[0] = r;
