@@ -138,7 +138,7 @@ const unsigned char *DecodeHandlerVpx::imgToRgbBuf(const vpx_image_t *img, unsig
             unsigned char r = (unsigned char) (1.0*y + 1.5748*v);
             unsigned char g = (unsigned char) (1.0*y - 0.1873*u - 0.4681*v);
             unsigned char b = (unsigned char) (1.0*y + 1.8556*u);
-            unsigned char a = 1;
+            unsigned char a = 255;
 
             cur[0] = r;
             cur[1] = g;

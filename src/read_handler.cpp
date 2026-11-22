@@ -13,7 +13,7 @@ using namespace webm;
 
 ReadHandler::ReadHandler() {}
 ReadHandler::~ReadHandler() {
-    if (decoder) delete decoder;
+    if (decoder != nullptr) delete decoder;
 }
 
 

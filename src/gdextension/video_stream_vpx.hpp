@@ -27,6 +27,8 @@ class VideoStreamPlaybackVpx : public VideoStreamPlayback {
         bool playing{false};
         Ref<ImageTexture> texture{nullptr};
 
+        bool hasVideo{false};
+        double videoTime{0.0};
         Ref<FileAccess> file{nullptr};
 
         Status readerStatus{};
@@ -35,9 +37,9 @@ class VideoStreamPlaybackVpx : public VideoStreamPlayback {
         WebmParser parser{};
 
         const unsigned char *decodedData{nullptr};
-        unsigned int decodedDataLen;
-        unsigned int decodedWidth;
-        unsigned int decodedHeight;
+        unsigned int decodedDataLen{0};
+        unsigned int decodedWidth{0};
+        unsigned int decodedHeight{0};
 
         void load_next_frame();
 

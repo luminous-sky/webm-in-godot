@@ -18,10 +18,10 @@ class ReadHandler : public Callback {
 
         bool video_found{false};
         bool audio_found{false};
-        TrackEntry video_track;
-        TrackEntry audio_track;
+        TrackEntry video_track{};
+        TrackEntry audio_track{};
 
-        DecodeHandler *decoder;
+        DecodeHandler *decoder{nullptr};
 
 
         ReadHandler();
