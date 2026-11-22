@@ -103,6 +103,17 @@ const unsigned char *DecodeHandlerVpx::imgToYuvBuf(const vpx_image_t *img, unsig
     return final;
 }
 
+constexpr void yuvToRgb(int y, int u, int v, int *r, int *g, int *b) {
+    // BT.709 constants
+    double r_f = (1.164*(y - 16) + 1.596*(v - 128));
+    double g_f = (1.164*(y - 16) - 0.391*(u - 128) - 0.813*(v - 128));
+    double b_f = (1.164*(y - 16) + 2.018*(u - 128));
+
+    *r = (unsigned char) std::clamp(r_f, 0.0, 255.0);
+    *g = (unsigned char) std::clamp(g_f, 0.0, 255.0);
+    *b = (unsigned char) std::clamp(b_f, 0.0, 255.0);
+}
+
 // Returns a buffer containing the image's RGB data
 // This buffer needs to be deleted manually by the caller using delete[]
 const unsigned char *DecodeHandlerVpx::imgToRgbBuf(const vpx_image_t *img, unsigned int *bufSize, unsigned int *bufWidth, unsigned int *bufHeight) {
@@ -135,14 +146,11 @@ const unsigned char *DecodeHandlerVpx::imgToRgbBuf(const vpx_image_t *img, unsig
             int u = uPlane[(imgY >> 1) * uStride + (imgX >> 1)];
             int v = vPlane[(imgY >> 1) * vStride + (imgX >> 1)];
 
-            // BT.709 constants
-            double r_f = (1.164*(y - 16) + 1.596*(v - 128));
-            double g_f = (1.164*(y - 16) - 0.391*(u - 128) - 0.813*(v - 128));
-            double b_f = (1.164*(y - 16) + 2.018*(u - 128));
+            int r{};
+            int g{};
+            int b{};
 
-            unsigned char r = (unsigned char) std::clamp(r_f, 0.0, 255.0);
-            unsigned char g = (unsigned char) std::clamp(g_f, 0.0, 255.0);
-            unsigned char b = (unsigned char) std::clamp(b_f, 0.0, 255.0);
+            yuvToRgb(y, u, v, &r, &g, &b);
             unsigned char a = 255;
 
             cur[0] = r;

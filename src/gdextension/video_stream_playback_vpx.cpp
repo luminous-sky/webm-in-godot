@@ -1,3 +1,4 @@
+#include <cstring>
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/classes/image.hpp>
 #include <godot_cpp/core/class_db.hpp>
@@ -101,9 +102,8 @@ void VideoStreamPlaybackVpx::_update(double delta) {
     print_line("Rendering frame");
     
     PackedByteArray packedData{};
-    for (unsigned int i = 0; i < decodedDataLen; i++) {
-        packedData.append(decodedData[i]);
-    }
+    packedData.resize(decodedDataLen);
+    memcpy(packedData.ptrw(), decodedData, decodedDataLen);
 
     print_line(decodedWidth, "x", decodedHeight, " -> ", packedData[0], " ", packedData[1], " ", packedData[2], " ", packedData[3]);
 
