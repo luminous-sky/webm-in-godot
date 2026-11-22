@@ -46,6 +46,11 @@ Status FileAccessReader::Read(size_t num_to_read, uint8_t* buffer, uint64_t* num
     size_t actualToRead = num_to_read;
     
     uint64_t remaining = (file -> get_length()) - (file -> get_position());
+    if (remaining <= 0) {
+        *num_actually_read = 0;
+        return Status(Status::kEndOfFile);
+    }
+
     if (remaining < actualToRead) {
         actualToRead = remaining;
     }

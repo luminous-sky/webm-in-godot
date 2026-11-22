@@ -104,6 +104,12 @@ Status ReadHandler::OnFrame(const FrameMetadata &metadata, Reader *reader, uint6
             Status readerStatus;
             do {
                 readerStatus = reader -> Read(*bytes_remaining, cur, &dataRead);
+                if (readerStatus.code == Status::kEndOfFile) {
+                    delete[] buf;
+                    frames_left = 0;
+                    return Status(Status::kOkCompleted);
+                }
+
                 *bytes_remaining -= dataRead;
                 cur += dataRead;
             } while (readerStatus.code == Status::kOkPartial);
