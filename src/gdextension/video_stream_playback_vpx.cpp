@@ -61,6 +61,9 @@ void VideoStreamPlaybackVpx::load_next_frame() {
     readerStatus = parser.Feed(&callback, &reader);
     DecodeHandlerVpx *decoder = (DecodeHandlerVpx *) callback.decoder;
 
+    String codecName{callback.video_track.codec_id.value().c_str()};
+    ERR_FAIL_COND_MSG(decoder == nullptr, "Failed to decode codec '" + codecName + "'.");
+
     decoder -> dequeueNextFrame();
     if (decoder -> getLastFrame() != nullptr) {
         decodedData = decoder -> imgToRgbBuf(decoder -> getLastFrame(), &decodedDataLen, &decodedWidth, &decodedHeight);

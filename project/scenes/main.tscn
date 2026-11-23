@@ -19,3 +19,4 @@ grow_horizontal = 2
 grow_vertical = 2
 stream = SubResource("VideoStreamVpx_sgp6g")
 autoplay = true
+expand = true
