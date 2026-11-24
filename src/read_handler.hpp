@@ -2,6 +2,7 @@
 #define READ_HANDLER_HPP
 
 #include <string>
+#include <queue>
 #include <webm/callback.h>
 
 #include "decode_handler.hpp"
@@ -36,7 +37,14 @@ class ReadHandler : public Callback {
         virtual Status OnFrame(const FrameMetadata &metadata, Reader *reader, uint64_t *bytes_remaining) override;
         
         void processFrames(unsigned int num_frames, Action action);
+        
+        short getCurTimecode();
+        short getNextTimecode();
     private:
+        // If the scale is 1,000,000 ns, then the timecode is in ms
+        short cur_timecode{0};
+        std::queue<short> next_timecodes{};
+
         bool next_frame_video{false};
         bool next_frame_audio{false};
         bool next_frame_can_skip{false};

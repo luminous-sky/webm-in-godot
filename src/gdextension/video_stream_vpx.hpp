@@ -41,6 +41,11 @@ class VideoStreamPlaybackVpx : public VideoStreamPlayback {
         unsigned int decodedWidth{0};
         unsigned int decodedHeight{0};
 
+        // Timecode deltas
+        short deltaTimeShort{0};
+        double deltaTime{0.0};
+
+        void update_timecode();
         void load_next_frame();
 
     protected:

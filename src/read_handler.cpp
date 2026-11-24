@@ -5,6 +5,7 @@
 #include <webm/status.h>
 
 #include "decode_handler_vpx.hpp"
+#include "godot_cpp/core/print_string.hpp"
 #include "read_handler.hpp"
 
 
@@ -58,6 +59,7 @@ Status ReadHandler::HandleBlockBegin(const Block &block) {
     if (video_found) {
         if (block.track_number == video_track.track_number.value()) {
             next_frame_video = true;
+            next_timecodes.push(block.timecode);
             return Status(Status::kOkCompleted);
         }
     }
@@ -134,4 +136,24 @@ Status ReadHandler::OnFrame(const FrameMetadata &metadata, Reader *reader, uint6
 void ReadHandler::processFrames(unsigned int num_frames, Action action) {
     frames_left = num_frames;
     decode_frames = (action == Action::kRead);
+}
+
+
+// Updated when getNextTimecode() is called
+short ReadHandler::getCurTimecode() {
+    return cur_timecode;
+}
+
+#include <iostream>
+
+short ReadHandler::getNextTimecode() {
+    if (next_timecodes.empty()) return 0;
+
+    short timecode = next_timecodes.front();
+    next_timecodes.pop();
+
+    std::cout << "Timecode: " << timecode << "\nTimecodes: " << next_timecodes.size() << "\n";
+
+    cur_timecode = timecode;
+    return timecode;
 }

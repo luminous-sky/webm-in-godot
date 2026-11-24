@@ -49,6 +49,19 @@ void VideoStreamPlaybackVpx::set_file(const String &filename) {
 }
 
 
+// Updates the current timecode delta
+void VideoStreamPlaybackVpx::update_timecode() {
+    short cur = callback.getCurTimecode();
+    short next = callback.getNextTimecode();
+    print_line("Updating... ", cur, " -> ", next);
+
+    deltaTimeShort = (cur <= next) ? (next - cur) : 0;
+
+    deltaTime = (double) deltaTimeShort / 1000.0;
+    print_line(deltaTimeShort, " -> ", deltaTime);
+}
+
+
 // Assumes that another frame is available in the parser
 void VideoStreamPlaybackVpx::load_next_frame() {
     if (decodedData != nullptr) {
@@ -68,6 +81,8 @@ void VideoStreamPlaybackVpx::load_next_frame() {
     if (decoder -> getLastFrame() != nullptr) {
         decodedData = decoder -> imgToRgbBuf(decoder -> getLastFrame(), &decodedDataLen, &decodedWidth, &decodedHeight);
         hasVideo = true;
+
+        update_timecode();
     }
 }
 
@@ -97,9 +112,9 @@ void VideoStreamPlaybackVpx::_update(double delta) {
 
     print_line("Updating");
 
-    videoTime += 30.0*delta;
-    if (videoTime < 1.0) return;
-    videoTime -= 1.0;
+    videoTime += delta;
+    if (videoTime < deltaTime) return;
+    videoTime -= deltaTime;
     
 
     print_line("Rendering frame");
@@ -121,12 +136,16 @@ void VideoStreamPlaybackVpx::_update(double delta) {
     }
 
     // Drop frames as needed
-    unsigned int offset = (unsigned int) videoTime;
-    videoTime -= offset;
+    unsigned int offset = 0;
+    while (deltaTimeShort > 0 && videoTime >= deltaTime) {
+        videoTime -= deltaTime;
+        offset++;
+    }
 
-    print_line("Dropping ", offset, " frames");
-
-    callback.processFrames(offset, Action::kSkip);
+    if (offset) {
+        print_line("Dropping ", offset, " frames");
+        callback.processFrames(offset, Action::kSkip);
+    }
     load_next_frame();
 
     print_line("Frame: ", callback.num_video_frames);
