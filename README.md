@@ -25,7 +25,9 @@ To run the GDExtension in Godot, copy the **entire** `bin` folder (**including**
 
 Then, import a WEBM file encoded using VP8 or VP9 into the FileSystem.
 
-Create a Control node as the root node, then a VideoStreamPlayer under it. Drag the WEBM file into the player's "Stream" property and enable both "Autoplay" and "Expand".
+Create a Control node as the root node, then a VideoStreamPlayer under it. Expand both nodes by selecting each one, then clicking the anchor options button (green circle next to "View") and picking the full screen option (filled rectangle).
+
+Drag the WEBM file into the player's "Stream" property and enable both "Autoplay" and "Expand".
 
 Finally, run the created scene to see the video play in Godot.
 
