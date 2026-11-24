@@ -5,7 +5,6 @@
 #include <webm/status.h>
 
 #include "decode_handler_vpx.hpp"
-#include "godot_cpp/core/print_string.hpp"
 #include "read_handler.hpp"
 
 
@@ -144,15 +143,11 @@ short ReadHandler::getCurTimecode() {
     return cur_timecode;
 }
 
-#include <iostream>
-
 short ReadHandler::getNextTimecode() {
     if (next_timecodes.empty()) return 0;
 
     short timecode = next_timecodes.front();
     next_timecodes.pop();
-
-    std::cout << "Timecode: " << timecode << "\nTimecodes: " << next_timecodes.size() << "\n";
 
     cur_timecode = timecode;
     return timecode;
