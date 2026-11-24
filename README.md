@@ -4,6 +4,8 @@
 
 A program aiming to add additional webm video support to Godot to support more common video formats as Godot only currently supports the OGG Theora codec which some programs are unable to export to.
 
+This is done through Godot's GDExtension system and the [godot-cpp](https://github.com/godotengine/godot-cpp/tree/godot-4.2.2-stable) bindings to provide an easier interface for the [libwebm](https://github.com/webmproject/libwebm) and [libvpx](https://github.com/webmproject/libvpx) libraries.
+
 **NOTE:** This project is currently a work-in-progress with only basic playback features implemented while other features, like seeking, are not implemented.
 
 ![Godot Demo](./screenshots/godot_demo.png)
