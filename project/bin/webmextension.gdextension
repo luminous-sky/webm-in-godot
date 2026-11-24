@@ -1,0 +1,15 @@
+[configuration]
+
+entry_symbol = "example_library_init"
+compatibility_minimum = "4.4"
+reloadable = false
+
+[libraries]
+
+linux.x86_64 = "linux/libwebmextension.linux.template_debug.x86_64.so"
+
+[dependencies]
+linux {
+    "res://bin/linux/libwebm.so",
+    "res://bin/linux/libvpx.so.12"
+}
