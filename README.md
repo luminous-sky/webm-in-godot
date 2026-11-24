@@ -2,9 +2,11 @@
 
 > **NOTE:** To see the **fixes** done on the original build of the project, check the [patches branch](https://github.com/luminous-sky/webm-in-godot/tree/patches) of this repository.
 
-A program aiming to add additional webm video support to Godot to support more common video formats as Godot only currently supports the OGG Theora codec which some programs are unable to export to. 
+A program aiming to add additional webm video support to Godot to support more common video formats as Godot only currently supports the OGG Theora codec which some programs are unable to export to.
 
-**NOTE:** This project is currently a work-in-progress with only a **standalone VP9 decoder** for WEBM outside of Godot which is in the process of being ported to GDExtension.
+**NOTE:** This project is currently a work-in-progress with only basic playback features implemented while other features, like seeking, are not implemented.
+
+![Godot Demo](./screenshots/godot_demo.png)
 
 ![Decoder Output](./screenshots/output_demo.png)
 ![Video Demo](./screenshots/video_demo.png)
@@ -13,7 +15,23 @@ A program aiming to add additional webm video support to Godot to support more c
 
 Releases of the program can be found at https://fractured-sky.itch.io/webm-in-godot.
 
-Currently, the standalone VP9 decoder must be ran from the **command line** and supports two input formats:
+### GDExtension builds
+
+**NOTE:** The current minimum Godot version to run this extension is 4.4.
+
+To run the GDExtension in Godot, copy the **entire** `bin` folder (**including** the `bin` folder itself) into the project's main folder so that it appears directly under `res://` in the FileSystem.
+
+**Reload** the project or **reopen** Godot to ensure the GDExtension is fully initialized.
+
+Then, import a WEBM file encoded using VP8 or VP9 into the FileSystem.
+
+Create a Control node as the root node, then a VideoStreamPlayer under it. Drag the WEBM file into the player's "Stream" property and enable both "Autoplay" and "Expand".
+
+Finally, run the created scene to see the video play in Godot.
+
+### Standalone decoder
+
+Currently, the standalone decoder must be ran from the **command line** and supports two input formats:
 
 - An input WEBM file (`./out video.webm`)
 - An input WEBM file and an output file for the first 64 raw decoded images (`./out video.webm output_images`)
@@ -44,7 +62,7 @@ External libraries are not provided in this repository but should be installed o
 
 ## Building
 
-### Standalone Program
+### Standalone program
 
 CMake is used to build a standalone decoder program.
 
@@ -56,9 +74,7 @@ cmake -B build
 cmake --build build
 ```
 
-### GDExtension (Incomplete)
-
-**NOTE:** The GDExtension portion of this project currently does not work. For now, these instructions are provided only for reference.
+### GDExtension
 
 SCons is used to build the main GDExtension using godot-cpp.
 
@@ -72,4 +88,4 @@ git submodule update --init
 
 Then, run `scons` to compile the extension. Once compiling has finished, the extension should appear under the `project` folder.
 
-Open the provided Godot project and verify that the GDExtension loads and functions properly before using it in other projects.
+Open the provided Godot project, import a WEBM file, and verify that the GDExtension loads and functions properly before using it in other projects.
